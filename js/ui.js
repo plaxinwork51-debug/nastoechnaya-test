@@ -1,14 +1,14 @@
 // Экраны книжки: список, лист настойки, топ, звания, бэкап. Логика вся в core.js (NK).
 (() => {
-const BAR = new URLSearchParams(location.search).get('bar') || 'svoboda';
+const BAR = (/^[a-z0-9_-]{1,32}$/.exec(new URLSearchParams(location.search).get('bar') || '') || ['svoboda'])[0];
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
 const fmtDate = ts => new Date(ts).toLocaleDateString('ru-RU', {day: 'numeric', month: 'long'});
-const fmtShort = ts => new Date(ts).toLocaleDateString('ru-RU', {day: '2-digit', month: '2-digit'});
+const fmtFull = ts => new Date(ts).toLocaleString('ru-RU', {day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit'});
 const plural = (n, a, b, c) => { const m = n % 10, h = n % 100; return n + ' ' + (m === 1 && h !== 11 ? a : m >= 2 && m <= 4 && (h < 12 || h > 14) ? b : c); };
 const RATE_CAP = ['', 'не моё', 'так себе', 'норм', 'хорошо', 'огонь'];
 const FALLBACK = 'data:image/svg+xml,' + encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke="#2B2117" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+  '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none" stroke="#2B2117" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
   '<path d="M38 30h44l-6 66a6 6 0 0 1-6 5H50a6 6 0 0 1-6-5z"/><path d="M41 52h38"/><path d="M46 60c8 3 20 3 28 0" opacity=".7"/>' +
   '<path d="M48 70l3 22M56 70l1 23M64 70l-1 23M72 70l-3 22" opacity=".35"/><path d="M54 22c2-4 10-4 12 0" opacity=".5"/></svg>');
 const icon = t => t.icon ? 'assets/icons/ink/' + t.icon + '.webp' : FALLBACK;
@@ -19,24 +19,27 @@ const SEAL_MINI = '<svg class="seal-mini" viewBox="0 0 32 32" aria-label="печ
 const HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
 const FAV_MINI = '<svg class="fav-mini" viewBox="0 0 24 24" fill="currentColor" aria-label="возьму ещё"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
 const GLASS = '<svg viewBox="0 0 30 38" aria-hidden="true"><path class="fill" d="M6.6 12h16.8l-1.9 21.2a2 2 0 0 1-2 1.8h-9a2 2 0 0 1-2-1.8z"/><path class="glass" d="M3 3h24l-2.9 30.4A2.6 2.6 0 0 1 21.5 36h-13a2.6 2.6 0 0 1-2.6-2.6z"/></svg>';
+const LINK_ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>';
 
+let sealN = 0;
 function seal(ts, rot) {
-  const d = new Date(ts), date = String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getFullYear()).slice(2);
+  const d = new Date(ts), date = String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getFullYear()).slice(2), pid = 'sp' + (++sealN);
   return '<svg class="seal" viewBox="0 0 200 200" style="--r:' + rot + 'deg;transform:rotate(' + rot + 'deg)" role="img" aria-label="Печать бармена от ' + date + '">' +
-    '<defs><path id="sp" d="M100 100m-72 0a72 72 0 1 1 144 0a72 72 0 1 1-144 0"/></defs>' +
+    '<defs><path id="' + pid + '" d="M100 100m-72 0a72 72 0 1 1 144 0a72 72 0 1 1-144 0"/></defs>' +
     '<circle cx="100" cy="100" r="92" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="100" cy="100" r="56" fill="none" stroke="currentColor" stroke-width="2"/>' +
-    '<text font-family="PT Serif, Georgia, serif" font-size="15" fill="currentColor"><textPath href="#sp" textLength="446" lengthAdjust="spacing">СВОБОDА · ПЕЧАТЬ БАРМЕНА · ДРАНИЧНАЯ ·</textPath></text>' +
+    '<text font-family="PT Serif, Georgia, serif" font-size="15" fill="currentColor"><textPath href="#' + pid + '" textLength="446" lengthAdjust="spacing">СВОБОDА · ПЕЧАТЬ БАРМЕНА · ДРАНИЧНАЯ ·</textPath></text>' +
     '<text x="100" y="96" text-anchor="middle" font-family="Oranienbaum, serif" font-size="23" letter-spacing="1" fill="currentColor">ПРОБОВАЛ</text>' +
     '<text x="100" y="122" text-anchor="middle" font-family="PT Serif, serif" font-size="18" fill="currentColor">' + date + '</text></svg>';
 }
 
-let view = 'book', filter = 'all', query = '', openId = null;
+let view = 'book', filter = 'all', query = '', openId = null, flushNote = () => {};
 
 // ---------- книжка ----------
 function renderBook() {
   const n = NK.tasted(), s = NK.stamped(), rk = NK.rank();
-  $('#bookStatus').innerHTML = n ? 'В книжке ' + plural(n, 'запись', 'записи', 'записей') + ', печатей <b>' + s + ' из ' + NK.total() + '</b> · ' + esc(rk.r.name)
-    : 'Попробовал настойку? Найди её тут и запиши, как зашла';
+  $('#bookStatus').innerHTML = (NK.persistent ? '' : '<span class="warn">Этот браузер не сохраняет книжку. Записывай и сразу отправляй себе ссылкой во вкладке «Звания»</span>') +
+    (n ? 'В книжке ' + plural(n, 'запись', 'записи', 'записей') + ', печатей <b>' + s + ' из ' + NK.total() + '</b> · ' + esc(rk.r.name)
+      : 'Попробовал настойку? Найди её тут и запиши, как зашла');
   const q = query.trim().toLowerCase();
   const list = NK.cfg.tinctures.filter(t => {
     const e = NK.entry(t.id);
@@ -58,10 +61,12 @@ function renderBook() {
     filter === 'tasted' ? 'Пока пусто. Первая запись ждёт' : 'Ты попробовал всё. Легенда') + '</p>';
   document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === filter));
 }
+function markBackupTab() { $('.tabs button[data-v="ranks"]').classList.toggle('dot', NK.needBackup()); }
 
 // ---------- лист настойки ----------
 function openLeaf(id, push = true) {
   const t = NK.byId(id); if (!t) return;
+  if (push && openId) return;  // двойной тап по строке
   openId = id;
   if (push) history.pushState({leaf: id}, '');
   renderLeaf();
@@ -71,6 +76,7 @@ function openLeaf(id, push = true) {
 }
 function closeLeaf() {
   if (!openId) return;
+  flushNote();
   const id = openId; openId = null;
   $('#leaf').classList.remove('on'); document.body.style.overflow = '';
   render();
@@ -99,49 +105,60 @@ function renderLeaf() {
 
     '<div class="stamp-box" id="stampBox">' + (e.s
       ? seal(e.s, rot) + '<p class="seal-cap">Печать бармена · ' + fmtDate(e.s) + '</p>'
-      : '<p><b style="font-weight:400;color:var(--ink)">Печать бармена.</b> Без неё запись остаётся заметкой, с ней настойка идёт в звания. Попроси у бармена код</p>' +
+      : '<p><b style="font-weight:400;color:var(--ink)">Печать бармена.</b> Без неё запись остаётся заметкой, с ней настойка идёт в звания. Попроси бармена ввести код</p>' +
         '<form id="codeForm" autocomplete="off"><label class="sr" for="code">Код от бармена</label>' +
         '<input class="code" id="code" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="····" autocomplete="off" enterkeyhint="done">' +
         '<div class="msg" id="msg" role="alert"></div><button class="btn btn-ink" type="submit">Поставить печать</button></form>') + '</div>';
   wireLeaf(t);
 }
-function touchDate() { const e = NK.entry(openId); $('#noteDate').textContent = e && e.d ? 'записано ' + fmtDate(e.d) : ''; }
+const intoView = el => setTimeout(() => el.scrollIntoView({block: 'center', behavior: 'smooth'}), 320);  // клавиатура уже выехала
 function wireLeaf(t) {
-  const L = $('#leafIn');
+  const L = $('#leafIn'), id = t.id;
+  const touchDate = () => { const e = NK.entry(id); const el = $('#noteDate'); if (el) el.textContent = e && e.d ? 'записано ' + fmtDate(e.d) : ''; };
   L.querySelector('[data-back]').addEventListener('click', () => history.back());
   L.querySelectorAll('[data-rate]').forEach(b => b.addEventListener('click', () => {
-    const cur = (NK.entry(openId) || {}).r || 0, v = +b.dataset.rate, next = cur === v ? 0 : v;
-    NK.save(openId, {r: next});
+    const cur = (NK.entry(id) || {}).r || 0, v = +b.dataset.rate, next = cur === v ? 0 : v;
+    NK.save(id, {r: next});
     L.querySelectorAll('[data-rate]').forEach(x => { x.classList.toggle('on', +x.dataset.rate <= next); x.setAttribute('aria-checked', +x.dataset.rate === next); });
     $('#rateCap').textContent = RATE_CAP[next]; touchDate();
     if (navigator.vibrate) navigator.vibrate(8);
   }));
   L.querySelectorAll('[data-tag]').forEach(b => b.addEventListener('click', () => {
-    const e = NK.toggleTag(openId, b.dataset.tag); b.setAttribute('aria-pressed', !!(e && e.t && e.t.includes(b.dataset.tag))); touchDate();
+    const e = NK.toggleTag(id, b.dataset.tag); b.setAttribute('aria-pressed', !!(e && e.t && e.t.includes(b.dataset.tag))); touchDate();
   }));
   const fav = L.querySelector('[data-fav]');
-  fav.addEventListener('click', () => { const e = NK.save(openId, {f: (NK.entry(openId) || {}).f ? 0 : 1}); fav.setAttribute('aria-pressed', !!(e && e.f)); touchDate(); });
-  const note = $('#note'); let tm;
+  fav.addEventListener('click', () => { const e = NK.save(id, {f: (NK.entry(id) || {}).f ? 0 : 1}); fav.setAttribute('aria-pressed', !!(e && e.f)); touchDate(); });
+  const note = $('#note'); let tm, dirty = false;
   const left = () => { const l = NK.NOTE_MAX - note.value.length; $('#noteLeft').textContent = l < 60 ? 'осталось ' + l : ''; };
-  note.addEventListener('input', () => { left(); clearTimeout(tm); tm = setTimeout(() => { NK.save(openId, {n: note.value}); touchDate(); }, 350); });
-  note.addEventListener('blur', () => { clearTimeout(tm); NK.save(openId, {n: note.value}); touchDate(); });
+  flushNote = () => { clearTimeout(tm); if (dirty) { dirty = false; NK.save(id, {n: note.value}); touchDate(); } };
+  note.addEventListener('input', () => { dirty = true; left(); clearTimeout(tm); tm = setTimeout(flushNote, 350); });
+  note.addEventListener('blur', flushNote);
+  note.addEventListener('focus', () => intoView(note));
   left();
   const form = $('#codeForm'); if (!form) return;
   const input = $('#code'), msg = $('#msg');
-  input.addEventListener('input', () => { input.value = input.value.replace(/\D/g, '').slice(0, 4); input.classList.remove('bad'); msg.textContent = ''; if (input.value.length === 4) form.requestSubmit(); });
+  const submit = () => form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', {cancelable: true}));
+  input.addEventListener('focus', () => intoView(form));
+  input.addEventListener('input', () => { input.value = input.value.replace(/\D/g, '').slice(0, 4); input.classList.remove('bad'); msg.textContent = ''; if (input.value.length === 4) submit(); });
   form.addEventListener('submit', async ev => {
     ev.preventDefault();
-    const r = await NK.stamp(openId, input.value);
+    const r = await NK.stamp(id, input.value);
+    if (r.error === 'busy') return;
     if (r.ok) {
+      if (r.already && $('#stampBox .seal')) return;
       if (navigator.vibrate) navigator.vibrate([18, 40, 28]);
-      const e = NK.entry(openId), rot = ((t.id * 37) % 20) - 12;
+      const e = NK.entry(id), rot = ((t.id * 37) % 20) - 12;
       $('#stampBox').innerHTML = seal(e.s, rot) + '<p class="seal-cap">Печать бармена · ' + fmtDate(e.s) + '</p>';
-      $('#stampBox .seal').classList.add('thud'); touchDate();
-      if (r.rankUp) setTimeout(() => rankUp(r.rank), 650); else toast('Печать стоит. ' + plural(NK.stamped(), 'печать', 'печати', 'печатей') + ' в книжке');
+      $('#stampBox .seal').classList.add('thud'); touchDate(); markBackupTab();
+      const n = NK.stamped();
+      if (r.rankUp) setTimeout(() => rankUp(r.rank), 650);
+      else if (n === 1 || n % 5 === 0) setTimeout(() => nudgeBackup(n), 650);
+      else toast('Печать стоит. ' + plural(n, 'печать', 'печати', 'печатей') + ' в книжке');
       return;
     }
     if (r.locked) msg.textContent = 'Много промахов подряд, подожди ' + r.left + ' сек';
     else if (r.error === 'format') msg.textContent = 'Код из четырёх цифр';
+    else if (r.error === 'insecure' || r.error === 'crypto') msg.textContent = 'Печать не ставится в этом браузере. Открой книжку по ссылке https://';
     else msg.textContent = 'Не тот код. Уточни у бармена';
     input.classList.remove('bad'); void input.offsetWidth; input.classList.add('bad'); input.select();
   });
@@ -183,50 +200,87 @@ function renderRanks() {
   const favs = NK.cfg.tinctures.filter(t => (NK.entry(t.id) || {}).f).length;
   $('#summary').innerHTML = NK.tasted() ? 'В книжке <b>' + plural(NK.tasted(), 'запись', 'записи', 'записей') + '</b>, из них с печатью <b>' + NK.stamped() + '</b>' +
     (favs ? ', а «возьму ещё» стоит у <b>' + plural(favs, 'настойки', 'настоек', 'настоек') + '</b>' : '') : 'Книжка пока пустая. Начни с любой настойки';
+  $('#bkHint').hidden = !NK.needBackup();
+  $('#showBar').hidden = NK.stamped() === 0;
 }
 
-// ---------- диалоги ----------
-function dialog(html, onOpen) {
+// ---------- диалоги (живут в истории: «назад» закрывает окно, а не книжку) ----------
+let dlgSticky = false, dlgPushed = false, dlgFocus = null, dlgUrl = null;
+function dialog(html, onOpen, opts = {}) {
+  if (!$('#dlg').classList.contains('on')) dlgFocus = document.activeElement;
+  dlgSticky = !!opts.sticky;
+  if (dlgUrl) { URL.revokeObjectURL(dlgUrl); dlgUrl = null; }
   $('#dlgCard').innerHTML = html; $('#dlg').classList.add('on');
-  const f = $('#dlgCard').querySelector('button'); if (f) setTimeout(() => f.focus(), 50);
+  if (!dlgPushed) { history.pushState(Object.assign({}, history.state, {dlg: 1}), ''); dlgPushed = true; }
+  const f = $('#dlgCard').querySelector('button'); if (f) setTimeout(() => f.focus({preventScroll: true}), 50);
   $('#dlgCard').querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeDialog));
   if (onOpen) onOpen($('#dlgCard'));
 }
-function closeDialog() { $('#dlg').classList.remove('on'); }
+function hideDialog() {
+  $('#dlg').classList.remove('on'); dlgSticky = false;
+  if (dlgUrl) { URL.revokeObjectURL(dlgUrl); dlgUrl = null; }
+  if (dlgFocus && dlgFocus.focus) dlgFocus.focus({preventScroll: true});
+}
+function closeDialog() { if (dlgPushed) { dlgPushed = false; history.back(); } hideDialog(); }
 function rankUp(r) {
   if (navigator.vibrate) navigator.vibrate([30, 60, 30, 60, 80]);
-  dialog('<div class="big-medal"><img src="assets/medals/' + r.medal + '.webp" alt="" width="120" height="120"></div><p style="margin:0;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)">Новое звание</p>' +
-    '<h3>' + esc(r.name) + '</h3><p>' + esc(r.line) + '</p><button class="btn btn-gold" data-close>Ура</button>');
+  const save = NK.needBackup();
+  dialog('<div class="big-medal"><img src="assets/medals/' + r.medal + '.webp" alt="" width="120" height="120"></div><p class="kicker">Новое звание</p>' +
+    '<h3>' + esc(r.name) + '</h3><p>' + esc(r.line) + '</p><button class="btn btn-gold" data-close>Ура</button>' +
+    (save ? '<button class="btn btn-line" id="rkSave">' + LINK_ICO + 'Сохранить книжку ссылкой</button>' : ''), card => {
+    if (save) card.querySelector('#rkSave').addEventListener('click', openBackup);
+  });
   render();
 }
+function nudgeBackup(n) {
+  dialog('<h3>' + (n === 1 ? 'Первая печать!' : plural(n, 'печать', 'печати', 'печатей') + '!') + '</h3>' +
+    '<p>Книжка живёт только в этом браузере, а телефоны любят её стирать. Отправь себе ссылку на книжку, пара секунд, и печати не пропадут</p>' +
+    '<button class="btn btn-ink" id="ngSave">' + LINK_ICO + 'Сохранить ссылкой</button><button class="btn btn-line" data-close>Потом</button>', card => {
+    card.querySelector('#ngSave').addEventListener('click', openBackup);
+  });
+}
 async function openBackup() {
-  const link = await NK.backupLink();
+  let link;
+  try { link = await NK.backupLink(); } catch (e) { toast('Не получилось собрать ссылку, обнови страницу'); return; }
+  markBackupTab(); if (view === 'ranks') renderRanks();
   const canShare = !!navigator.share;
-  dialog('<h3>Книжка ссылкой</h3><p>Книжка живёт в этом браузере. Отправь ссылку себе в Избранное: откроешь её на новом телефоне, и все записи с печатями вернутся</p>' +
-    '<div class="link-box">' + esc(link) + '</div>' +
+  dialog('<h3>Книжка ссылкой</h3><p>Отправь ссылку себе в Избранное. Откроешь её на любом телефоне или в другом браузере, и записи с печатями вернутся</p>' +
+    (link.notes ? '' : '<p class="note-warn">Заметок много, в ссылку вошли только оценки, теги и печати. Заметки остаются на этом телефоне</p>') +
+    '<div class="link-box">' + esc(link.url) + '</div>' +
     (canShare ? '<button class="btn btn-ink" id="bkShare">Отправить себе</button>' : '') +
-    '<button class="btn ' + (canShare ? 'btn-line' : 'btn-ink') + '" id="bkCopy">Скопировать ссылку</button><button class="btn btn-line" data-close>Закрыть</button>', card => {
-    if (canShare) card.querySelector('#bkShare').addEventListener('click', () => navigator.share({title: 'Моя настоечная книжка', url: link}).catch(() => {}));
+    '<button class="btn ' + (canShare ? 'btn-line' : 'btn-ink') + '" id="bkCopy">Скопировать ссылку</button>' +
+    '<p class="tip">Открывай книжку всегда одинаково: QR из камеры и QR из Телеграма открывают два разных браузера с разными книжками</p>' +
+    '<button class="btn btn-line" data-close>Закрыть</button>', card => {
+    if (canShare) card.querySelector('#bkShare').addEventListener('click', () => navigator.share({title: 'Моя настоечная книжка', url: link.url}).catch(() => {}));
     card.querySelector('#bkCopy').addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(link); toast('Ссылка скопирована'); }
+      try { await navigator.clipboard.writeText(link.url); toast('Ссылка скопирована'); }
       catch (e) { const r = document.createRange(); r.selectNodeContents(card.querySelector('.link-box')); getSelection().removeAllRanges(); getSelection().addRange(r); toast('Выделил, скопируй вручную'); }
     });
   });
 }
+function showToBarman() {
+  const list = NK.stampList(), rk = NK.rank();
+  dialog('<h3>Печати для бармена</h3><p>' + esc(rk.r.name) + ', ' + plural(list.length, 'печать', 'печати', 'печатей') + '. Каждая с датой и временем</p>' +
+    '<ol class="stamp-list">' + list.map(x => '<li><span>' + esc(x.t.name) + '</span><span>' + fmtFull(x.s) + '</span></li>').join('') + '</ol>' +
+    '<button class="btn btn-line" data-close>Закрыть</button>');
+}
 async function checkIncoming() {
   if (!/[#&]b=/.test(location.hash)) return;
   const bk = await NK.readBackup(location.hash);
-  history.replaceState(null, '', location.pathname + location.search);
+  history.replaceState(history.state, '', location.pathname + location.search);
+  if (bk && bk.error === 'old') { toast('Браузер старый и не открывает эту ссылку. Обнови его или открой в Chrome/Safari'); return; }
   if (!bk) { toast('Ссылка с книжкой битая, ничего не добавили'); return; }
   dialog('<h3>Нашли книжку</h3><p>В ссылке ' + plural(bk.count, 'запись', 'записи', 'записей') + '. Добавить к этой книжке? Твои записи останутся, недостающие доберутся</p>' +
+    (bk.fake ? '<p class="note-warn">' + plural(bk.fake, 'печать не прошла', 'печати не прошли', 'печатей не прошли') + ' проверку кодом и не перенесутся</p>' : '') +
     '<button class="btn btn-ink" id="bkYes">Добавить</button><button class="btn btn-line" data-close>Не надо</button>', card => {
     card.querySelector('#bkYes').addEventListener('click', () => {
-      const m = NK.merge(bk.e); closeDialog(); render();
-      if (m.rankUp) setTimeout(() => rankUp(m.rank), 300); else toast(m.added ? 'Добавили ' + plural(m.added, 'запись', 'записи', 'записей') : 'Всё уже было в книжке');
+      const m = NK.merge(bk.e); closeDialog(); render(); markBackupTab();
+      if (m.rankUp) setTimeout(() => rankUp(m.rank), 350);
+      else toast(m.added || m.stamps ? 'Добавили ' + (m.added ? plural(m.added, 'запись', 'записи', 'записей') : '') + (m.added && m.stamps ? ' и ' : '') + (m.stamps ? plural(m.stamps, 'печать', 'печати', 'печатей') : '') : 'Всё уже было в книжке');
     });
-  });
+  }, {sticky: true});
 }
-function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), 2600); }
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), 3200); }
 
 // ---------- картинка «моя книжка» 1080x1920 ----------
 const loadImg = src => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; });
@@ -242,7 +296,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {  // iOS 15 и старые 
   };
 }
 async function makeCard() {
-  await Promise.all(['84px Oranienbaum', '40px "PT Serif"', 'italic 40px "PT Serif"', '40px Caveat'].map(f => document.fonts.load(f, 'АБВабв')));
+  await Promise.allSettled(['84px Oranienbaum', '40px "PT Serif"', 'italic 40px "PT Serif"', '40px Caveat'].map(f => document.fonts.load(f, 'АБВабв')));
   const W = 1080, H = 1920, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
   const rk = NK.rank(), top = NK.top(3).filter(x => x.e.r >= 3);
   const [bg, neon, medal, ...icons] = await Promise.all(['assets/bg_clean.webp', 'assets/neon.webp', 'assets/medals/' + rk.r.medal + '.webp', ...top.map(x => icon(x.t))].map(loadImg));
@@ -284,17 +338,20 @@ async function makeCard() {
   return new Promise(ok => c.toBlob(ok, 'image/png'));
 }
 async function openStory() {
-  dialog('<h3>Моя книжка</h3><p>Собираю картинку…</p>');
+  dialog('<h3>Моя книжка</h3><p>Собираю картинку…</p>', null, {sticky: true});
   let blob;
   try { blob = await makeCard(); } catch (e) { dialog('<h3>Не вышло</h3><p>Обнови страницу и попробуй ещё раз</p><button class="btn btn-line" data-close>Закрыть</button>'); return; }
+  if (!$('#dlg').classList.contains('on')) return;  // гость уже ушёл
   const url = URL.createObjectURL(blob), file = new File([blob], 'nastoechnaya-knizhka.png', {type: 'image/png'});
   const canShare = !!(navigator.canShare && navigator.canShare({files: [file]}));
   dialog('<h3>Моя книжка</h3><p>Картинка под сторис</p><img class="story-prev" src="' + url + '" alt="Картинка с твоим званием и топом" width="216" height="384">' +
     (canShare ? '<button class="btn btn-ink" id="stShare">Поделиться</button>' : '') +
     '<a class="btn ' + (canShare ? 'btn-line' : 'btn-ink') + '" href="' + url + '" download="nastoechnaya-knizhka.png">Сохранить картинку</a>' +
+    '<p class="tip">Не сохраняется? Зажми картинку пальцем и выбери «Сохранить»</p>' +
     '<button class="btn btn-line" data-close>Закрыть</button>', card => {
     if (canShare) card.querySelector('#stShare').addEventListener('click', () => navigator.share({files: [file]}).catch(() => {}));
   });
+  dlgUrl = url;
 }
 
 // ---------- навигация ----------
@@ -306,28 +363,39 @@ function show(v) {
   $('#hdTitle').textContent = TITLES[v];
   render(); window.scrollTo(0, 0);
 }
-function render() { if (view === 'book') renderBook(); else if (view === 'top') renderTop(); else renderRanks(); }
+function render() { if (view === 'book') renderBook(); else if (view === 'top') renderTop(); else renderRanks(); markBackupTab(); }
 
 document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => show(b.dataset.v)));
 document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => { filter = b.dataset.f; renderBook(); }));
 $('#q').addEventListener('input', e => { query = e.target.value; renderBook(); });
-document.addEventListener('click', e => { const r = e.target.closest('.row, .toprow'); if (r && r.dataset.id) openLeaf(+r.dataset.id); });
-$('#dlg').addEventListener('click', e => { if (e.target.id === 'dlg') closeDialog(); });
+document.addEventListener('click', e => { const r = e.target.closest('.row, .toprow'); if (r && r.dataset.id) { if ($('#dlg').classList.contains('on')) return; openLeaf(+r.dataset.id); } });
+$('#dlg').addEventListener('click', e => { if (e.target.id === 'dlg' && !dlgSticky) closeDialog(); });
 $('#backupBtn').addEventListener('click', openBackup);
 $('#storyBtn').addEventListener('click', openStory);
+$('#showBar').addEventListener('click', showToBarman);
 window.addEventListener('hashchange', () => { if (NK.cfg) checkIncoming(); });
-window.addEventListener('popstate', e => { if (e.state && e.state.leaf) openLeaf(e.state.leaf, false); else closeLeaf(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { if ($('#dlg').classList.contains('on')) closeDialog(); else if (openId) history.back(); } });
+window.addEventListener('popstate', e => {
+  if ($('#dlg').classList.contains('on')) { dlgPushed = false; hideDialog(); return; }
+  if (e.state && e.state.leaf) { if (openId !== e.state.leaf) openLeaf(e.state.leaf, false); } else closeLeaf();
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if ($('#dlg').classList.contains('on')) { if (!dlgSticky) closeDialog(); } else if (openId) history.back();
+});
+window.addEventListener('pagehide', () => flushNote());
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushNote(); });
+window.addEventListener('storage', e => { if (NK.cfg && e.key === NK.key) { NK.reload(); render(); } });  // вторая вкладка
 
 // ---------- заставка и знакомство ----------
 const ssGet = k => { try { return sessionStorage.getItem(k); } catch (e) { return null; } };
 const ssSet = k => { try { sessionStorage.setItem(k, '1'); } catch (e) {} };
+const root = document.documentElement;
 let coverTimer, onbFirst = false;
 function openCover() {
   const sp = $('#splash'); if (sp.classList.contains('open') || sp.classList.contains('gone')) return;
   clearTimeout(coverTimer); ssSet('nk_cover');
   sp.classList.add('open');
-  setTimeout(() => { sp.classList.add('gone'); afterCover(); }, 860);
+  setTimeout(() => { sp.classList.add('gone'); root.classList.remove('nk-first', 'nk-quick'); afterCover(); }, 860);
 }
 function afterCover() {
   if (!NK.flags().onboarded || !NK.flags().adult) showOnb(true);
@@ -351,6 +419,7 @@ function showOnb(first) {
 function hideOnb() { $('#onb').classList.remove('on'); document.body.classList.remove('no-scroll'); }
 function onbGo(i) { const t = $('#onbTrack'); t.scrollTo({left: i * t.clientWidth, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); setTimeout(onbSync, 420); }
 $('#splash').addEventListener('click', openCover);
+$('#splash').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCover(); } });
 $('#onbTrack').addEventListener('scroll', () => { clearTimeout(onbSync.t); onbSync.t = setTimeout(onbSync, 60); }, {passive: true});
 $('#onbSkip').addEventListener('click', () => onbFirst ? onbGo(2) : hideOnb());
 $('#onbNext').addEventListener('click', () => {
@@ -370,10 +439,10 @@ function boot(cfg) {
   $('#onbP1').textContent = 'У нас ' + plural(cfg.tinctures.length, 'домашняя настойка', 'домашние настойки', 'домашних настоек') + '. Взял рюмку, нашёл её в книжке';
   $('#onbSeal').innerHTML = seal(Date.now(), -8);
   document.querySelector('.art-note .rate').innerHTML = [1, 2, 3, 4, 5].map(i => '<button tabindex="-1" class="' + (i <= 4 ? 'on' : '') + '">' + GLASS + '</button>').join('');
-  if (history.state && history.state.leaf) history.replaceState(null, '');
+  if (history.state && (history.state.leaf || history.state.dlg)) history.replaceState(null, '');
   show('book');
   const fl = NK.flags(), sp = $('#splash');
-  if (fl.onboarded && fl.adult && ssGet('nk_cover')) { sp.classList.add('gone'); checkIncoming(); }
+  if (fl.onboarded && fl.adult && ssGet('nk_cover')) { sp.classList.add('gone'); root.classList.remove('nk-first', 'nk-quick'); checkIncoming(); }
   else {
     document.body.classList.add('no-scroll');
     if (fl.onboarded && fl.adult) { sp.classList.add('quick'); coverTimer = setTimeout(openCover, 900); }
@@ -381,6 +450,12 @@ function boot(cfg) {
   }
   window.NK_READY = true;
 }
-fetch('config/' + BAR + '.json', {cache: 'no-cache'}).then(r => r.json()).then(boot)
-  .catch(() => { $('#splash').classList.add('gone'); document.body.classList.remove('no-scroll'); $('#list').innerHTML = '<p class="empty">Не загрузилось. Проверь интернет и обнови страницу</p>'; });
+function start() {
+  fetch('config/' + BAR + '.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(boot).catch(() => {
+    $('#splash').classList.add('gone'); root.classList.remove('nk-first', 'nk-quick'); document.body.classList.remove('no-scroll');
+    $('#list').innerHTML = '<div class="empty">Не загрузилось. Проверь интернет<button class="btn btn-ink" id="retry" style="margin-top:14px">Повторить</button></div>';
+    $('#retry').addEventListener('click', () => location.reload());
+  });
+}
+start();
 })();
