@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#140e08">
+<title>Настоечная книжка · СВОБОDА</title>
+<link rel="preload" href="assets/oranienbaum.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/ptserif.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="band">
+  <img class="neon" src="assets/neon.webp" alt="" width="1440" height="517" fetchpriority="high">
+  <h1 id="hdTitle">Настоечная книжка</h1>
+  <p id="hdSub">СВОБОDА · Драничная</p>
+</header>
+
+<main class="page">
+  <!-- КНИЖКА -->
+  <section class="view" id="v-book" aria-labelledby="hdTitle">
+    <p class="status" id="bookStatus"></p>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <label class="sr" for="q">Найти настойку</label>
+      <input id="q" type="search" placeholder="Найти: вишня, джин, мята" autocomplete="off" enterkeyhint="search">
+    </div>
+    <div class="seg" role="group" aria-label="Показать">
+      <button data-f="all" aria-pressed="true">Все</button>
+      <button data-f="tasted" aria-pressed="false">Пробовал</button>
+      <button data-f="stamped" aria-pressed="false">С печатью</button>
+      <button data-f="new" aria-pressed="false">Ещё нет</button>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <!-- ТОП -->
+  <section class="view" id="v-top" hidden>
+    <h2>Лучшие вкусы</h2>
+    <div id="topList"></div>
+    <div id="profBlock"></div>
+    <h2 class="mt">Попробуй дальше</h2>
+    <p class="lead" id="sugLead"></p>
+    <div id="sugList"></div>
+  </section>
+
+  <!-- ЗВАНИЯ -->
+  <section class="view" id="v-ranks" hidden>
+    <div class="rank-now">
+      <div class="rank-head"><span class="coin coin-lg"><img id="rkMedal" src="assets/medals/0.webp" alt="" width="84" height="84"></span>
+        <div><h2>Твоё звание</h2><div class="rank-name" id="rkName"></div></div></div>
+      <p class="rank-line" id="rkLine"></p>
+      <div class="track"><i id="rkBar"></i></div>
+      <div class="track-cap"><span id="rkCount"></span><span id="rkNext"></span></div>
+    </div>
+    <div class="ladder" id="ladder"></div>
+    <p class="summary" id="summary"></p>
+    <div class="mt">
+      <button class="btn btn-gold" id="storyBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M9 15l2-2 2 2 2-3"/><circle cx="10" cy="8" r="1.5"/></svg>Картинка в сторис</button>
+      <button class="btn btn-ink" id="backupBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>Сохранить книжку ссылкой</button>
+      <button class="howto" id="howto">Как пользоваться книжкой</button>
+    </div>
+  </section>
+</main>
+
+<nav class="tabs" aria-label="Разделы">
+  <div class="tabs-in">
+    <button data-v="book" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 7h7M9 11h5"/></svg>Книжка</button>
+    <button data-v="top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.8-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1-4.4-4.3 6.1-.8z"/></svg>Топ</button>
+    <button data-v="ranks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="6"/><path d="M8.5 10.2L6 3h4l2 4.5L14 3h4l-2.5 7.2"/><path d="M12 12.5l.9 1.8 2 .3-1.4 1.4.3 2-1.8-1-1.8 1 .3-2-1.4-1.4 2-.3z"/></svg>Звания</button>
+  </div>
+</nav>
+
+<section class="leaf" id="leaf" role="dialog" aria-modal="true" aria-labelledby="leafName"><div class="leaf-in" id="leafIn"></div></section>
+<div class="dlg" id="dlg" role="dialog" aria-modal="true"><div class="dlg-card" id="dlgCard"></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<div class="splash" id="splash" role="button" aria-label="Открыть книжку">
+  <div class="sp-bg"></div><div class="sp-spine"></div>
+  <img class="sp-neon" src="assets/neon.webp" alt="" width="1440" height="517" fetchpriority="high">
+  <div class="sp-txt"><h2>Настоечная книжка</h2><div class="sp-rule"></div><p class="sp-sub">СВОБОDА · Драничная</p></div>
+  <p class="sp-hint">нажми, чтобы открыть</p>
+</div>
+
+<div class="onb" id="onb" role="dialog" aria-modal="true" aria-label="Как пользоваться книжкой">
+  <button class="onb-skip" id="onbSkip">Пропустить</button>
+  <div class="onb-track" id="onbTrack">
+    <section class="slide">
+      <div class="art"><svg viewBox="0 0 120 120" fill="none" stroke="#2B2117" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M30 22h60l-7 76a6 6 0 0 1-6 5H43a6 6 0 0 1-6-5z"/><path d="M34 48h52"/><path d="M38 48l4 46h36l4-46z" fill="#F7A813" stroke="none" opacity=".9"/><path d="M30 22h60l-7 76a6 6 0 0 1-6 5H43a6 6 0 0 1-6-5z"/><path d="M48 60l2 24M60 60v26M72 60l-2 24" stroke="#fff" opacity=".35"/><path d="M98 30l8-6M100 42h10M96 18l4-8" opacity=".6"/></svg></div>
+      <h3>Пробуй</h3>
+      <p id="onbP1">У нас 40 домашних настоек. Взял рюмку, нашёл её в книжке</p>
+    </section>
+    <section class="slide">
+      <div class="art art-note" aria-hidden="true">
+        <div class="hand">клубника прям с грядки</div>
+        <div class="rate"></div>
+      </div>
+      <h3>Записывай, что зашло</h3>
+      <p>Оценка рюмками, пара слов от руки, сердечко на то, что возьмёшь ещё. Через месяц будешь знать свой вкус</p>
+    </section>
+    <section class="slide">
+      <div class="art" id="onbSeal"></div>
+      <h3>Печать бармена</h3>
+      <p>Попроси у бармена код, он поставит печать. С печатями растёт звание, от Пригубившего до Почётного гражданина СВОБОDЫ</p>
+    </section>
+  </div>
+  <div class="onb-dots" id="onbDots"><i class="on"></i><i></i><i></i></div>
+  <div class="onb-act">
+    <button class="btn btn-ink" id="onbNext">Дальше</button>
+    <p class="onb-legal" id="onbLegal"></p>
+    <button class="onb-no" id="onbNo" hidden>Мне нет 18</button>
+  </div>
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
