@@ -3,7 +3,7 @@
  "title": "Настоечная книжка",
  "venue": "СВОБОDА · Драничная",
  "address": "Полярные Зори, 42А",
- "storageKey": "nastoechnaya_svoboda_v1",
+ "storageKey": "nastoechnaya_svoboda_v2",
  "salt": "796fdf4e680fd2d5",
  "tags": [
   {
@@ -79,13 +79,13 @@
   {
    "at": 20,
    "name": "Дегустатор",
-   "line": "Половина стены пройдена",
+   "line": "Двадцать вкусов позади, это уже серьёзно",
    "medal": 3
   },
   {
    "at": 30,
    "name": "Знаток настоек",
-   "line": "Осталось совсем немного",
+   "line": "Больше половины коллекции пройдено",
    "medal": 4
   },
   {
@@ -98,57 +98,63 @@
  "tinctures": [
   {
    "id": 1,
-   "name": "Мятная",
+   "name": "Манго Укроп",
    "base": "водка",
-   "taste": "мята",
-   "icon": "mint",
+   "group": "НА ВОДКЕ",
+   "taste": "манго, свежий укроп",
+   "icon": "mango",
    "tags": [
-    "fresh",
+    "fruit",
     "herb"
    ],
    "h": "e93a277b5388dd4b"
   },
   {
    "id": 2,
-   "name": "Базиликовая",
+   "name": "Киви Укроп",
    "base": "водка",
-   "taste": "базилик",
-   "icon": "basil",
+   "group": "НА ВОДКЕ",
+   "taste": "киви, свежий укроп",
+   "icon": "kiwi",
    "tags": [
+    "fruit",
     "herb"
    ],
    "h": "5552892ae56ff0ac"
   },
   {
    "id": 3,
-   "name": "Клубника и лемонграсс",
-   "base": "текила",
-   "taste": "клубника, лемонграсс",
-   "icon": "strawberry",
+   "name": "Ананас Имбирь",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "ананас, имбирь",
+   "icon": "pineapple",
    "tags": [
-    "berry",
-    "citrus"
+    "fruit",
+    "spicy"
    ],
    "h": "a2fe989c9bf50ff6"
   },
   {
    "id": 4,
-   "name": "Мятный джин",
-   "base": "джин",
-   "taste": "мята",
-   "icon": "mint",
+   "name": "Ананас Чили",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "ананас, перец чили",
+   "icon": "pineapple",
    "tags": [
-    "fresh",
-    "herb"
+    "fruit",
+    "spicy"
    ],
    "h": "a38dcb3dd61d54fe"
   },
   {
    "id": 5,
-   "name": "Клубника и базилик",
-   "base": "джин",
-   "taste": "базиликовый джин, клубника",
-   "icon": "strawberry",
+   "name": "Смородина Иван-чай",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "чёрная смородина, иван-чай",
+   "icon": "currant",
    "tags": [
     "berry",
     "herb"
@@ -157,345 +163,387 @@
   },
   {
    "id": 6,
-   "name": "Укропная",
+   "name": "Вишня Мята",
    "base": "водка",
-   "taste": "укроп",
-   "icon": "dill",
+   "group": "НА ВОДКЕ",
+   "taste": "вишня, мята",
+   "icon": "cherry",
    "tags": [
-    "herb"
+    "berry",
+    "fresh"
    ],
    "h": "3f3471c3654cd703"
   },
   {
    "id": 7,
-   "name": "Ментол",
+   "name": "Голубика Чили",
    "base": "водка",
-   "taste": "кристаллы ментола",
-   "icon": "menthol",
+   "group": "НА ВОДКЕ",
+   "taste": "голубика, перец чили",
+   "icon": "blueberry",
    "tags": [
-    "fresh"
+    "berry",
+    "spicy"
    ],
    "h": "67f51892f112f6dd"
   },
   {
    "id": 8,
-   "name": "Мята, клубника, голубика",
+   "name": "Клубника Базилик",
    "base": "водка",
-   "taste": "мятная водка, клубника, голубика",
-   "icon": "blueberry",
+   "group": "НА ВОДКЕ",
+   "taste": "клубника, базилик",
+   "icon": "strawberry",
    "tags": [
     "berry",
-    "fresh"
+    "herb"
    ],
    "h": "dc574796c608c7d8"
   },
   {
    "id": 9,
-   "name": "Роза",
+   "name": "Голубика Розмарин",
    "base": "водка",
-   "taste": "чайная роза",
-   "icon": "rose",
+   "group": "НА ВОДКЕ",
+   "taste": "голубика, розмарин",
+   "icon": "blueberry",
    "tags": [
-    "flower"
+    "berry",
+    "herb"
    ],
    "h": "7bec5efc92597971"
   },
   {
    "id": 10,
-   "name": "Жасмин",
+   "name": "Клубника Ментол",
    "base": "водка",
-   "taste": "цветы жасмина",
-   "icon": "jasmine",
+   "group": "НА ВОДКЕ",
+   "taste": "клубника, ментол",
+   "icon": "strawberry",
    "tags": [
-    "flower"
+    "berry",
+    "fresh"
    ],
    "h": "bfd90800fc36964d"
   },
   {
    "id": 11,
-   "name": "Малина и ежевика",
-   "base": "джин",
-   "taste": "малина, ежевика",
-   "icon": "blackberry",
+   "name": "Томатная Острая",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "томат, острый перец",
+   "icon": "pepper",
    "tags": [
-    "berry"
+    "spicy",
+    "strong"
    ],
    "h": "a0b4ce44b6e032c3"
   },
   {
    "id": 12,
-   "name": "Розмарин",
+   "name": "Брусника Мята",
    "base": "водка",
-   "taste": "свежий розмарин",
-   "icon": "rosemary",
+   "group": "НА ВОДКЕ",
+   "taste": "брусника, мята",
+   "icon": "lingonberry",
    "tags": [
-    "herb"
+    "berry",
+    "fresh"
    ],
    "h": "79348f01bd4c75b5"
   },
   {
    "id": 13,
-   "name": "Эрл Грей",
-   "base": "джин",
-   "taste": "чай с бергамотом",
-   "icon": "earlgrey",
+   "name": "Черника Мята",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "черника, мята",
+   "icon": "bilberry",
    "tags": [
-    "citrus",
-    "flower"
+    "berry",
+    "fresh"
    ],
    "h": "f3fbe38baf74842b"
   },
   {
    "id": 14,
-   "name": "Малина и гранат",
-   "base": "джин",
-   "taste": "малина, гранат",
-   "icon": "raspberry",
+   "name": "Черника Роза",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "черника, чайная роза",
+   "icon": "bilberry",
    "tags": [
     "berry",
-    "fruit"
+    "flower"
    ],
    "h": "da8b7264f41a076c"
   },
   {
    "id": 15,
-   "name": "Лимонная",
+   "name": "Красная Смородина",
    "base": "водка",
-   "taste": "цедра лимона",
-   "icon": "lemon",
-   "tags": [
-    "citrus"
-   ],
-   "h": "03da59802e3ba17a"
-  },
-  {
-   "id": 16,
-   "name": "Лаймовая",
-   "base": "водка",
-   "taste": "цедра лайма",
-   "icon": "lime",
-   "tags": [
-    "citrus"
-   ],
-   "h": "0abad681d04a1479"
-  },
-  {
-   "id": 17,
-   "name": "Малина и Эрл Грей",
-   "base": "джин",
-   "taste": "джин на Эрл Грей, малина",
-   "icon": "raspberry",
-   "tags": [
-    "berry",
-    "citrus"
-   ],
-   "h": "56d9cfcaa154c0c2"
-  },
-  {
-   "id": 18,
-   "name": "Лаймовый джин",
-   "base": "джин",
-   "taste": "цедра лайма",
-   "icon": "lime",
-   "tags": [
-    "citrus"
-   ],
-   "h": "4b92ad77859d8a83"
-  },
-  {
-   "id": 19,
-   "name": "Роза, ежевика, голубика",
-   "base": "водка",
-   "taste": "водка на розе, ежевика, голубика",
-   "icon": "rose",
-   "tags": [
-    "flower",
-    "berry"
-   ],
-   "h": "07433e6c1bae6142"
-  },
-  {
-   "id": 20,
-   "name": "Брусника и мята",
-   "base": "водка",
-   "taste": "мятная водка, брусника",
-   "icon": "lingonberry",
-   "tags": [
-    "berry",
-    "fresh"
-   ],
-   "h": "a8bbd10c0130e732"
-  },
-  {
-   "id": 21,
-   "name": "Голубика, клубника, ментол",
-   "base": "водка",
-   "taste": "водка с ментолом, клубника, голубика",
-   "icon": "blueberry",
-   "tags": [
-    "berry",
-    "fresh"
-   ],
-   "h": "cbc0e026b144782f"
-  },
-  {
-   "id": 22,
-   "name": "Зубровка с брусникой",
-   "base": "водка",
-   "taste": "водка на зубровке, брусника",
-   "icon": "lingonberry",
-   "tags": [
-    "herb",
-    "berry"
-   ],
-   "h": "0c5238ba167df337"
-  },
-  {
-   "id": 23,
-   "name": "Смородина и иван-чай",
-   "base": "водка",
-   "taste": "водка на иван-чае, чёрная смородина",
-   "icon": "currant",
-   "tags": [
-    "berry",
-    "herb"
-   ],
-   "h": "c2b80e6a16c8f496"
-  },
-  {
-   "id": 24,
-   "name": "Манго и укроп",
-   "base": "водка",
-   "taste": "укропная водка, манго",
-   "icon": "mango",
-   "tags": [
-    "fruit",
-    "herb"
-   ],
-   "h": "478536198a33fecf"
-  },
-  {
-   "id": 25,
-   "name": "Киви и укроп",
-   "base": "водка",
-   "taste": "укропная водка, киви",
-   "icon": "kiwi",
-   "tags": [
-    "fruit",
-    "herb"
-   ],
-   "h": "146ce8f5e7d73ffb"
-  },
-  {
-   "id": 26,
-   "name": "Красная смородина",
-   "base": "водка",
+   "group": "НА ВОДКЕ",
    "taste": "красная смородина",
    "icon": "redcurrant",
    "tags": [
     "berry"
    ],
-   "h": "bb3149cf082a012b"
+   "h": "03da59802e3ba17a"
   },
   {
-   "id": 27,
-   "name": "Клубника и киви",
+   "id": 16,
+   "name": "Брусника Зубровка",
    "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "брусника, трава зубровка",
+   "icon": "lingonberry",
+   "tags": [
+    "berry",
+    "herb"
+   ],
+   "h": "0abad681d04a1479"
+  },
+  {
+   "id": 17,
+   "name": "Роза Ежевика Голубика",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "чайная роза, ежевика, голубика",
+   "icon": "rose",
+   "tags": [
+    "flower",
+    "berry"
+   ],
+   "h": "56d9cfcaa154c0c2"
+  },
+  {
+   "id": 18,
+   "name": "Укроп Чеснок",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "укроп, чеснок",
+   "icon": "dill",
+   "tags": [
+    "herb",
+    "spicy"
+   ],
+   "h": "4b92ad77859d8a83"
+  },
+  {
+   "id": 19,
+   "name": "Лимончелло",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "лимон",
+   "icon": "lemon",
+   "tags": [
+    "citrus",
+    "dessert"
+   ],
+   "h": "07433e6c1bae6142"
+  },
+  {
+   "id": 20,
+   "name": "Клубника Киви",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
    "taste": "клубника, киви",
    "icon": "kiwi",
    "tags": [
     "berry",
     "fruit"
    ],
-   "h": "ef9dbbf1f8d9613a"
+   "h": "a8bbd10c0130e732"
   },
   {
-   "id": 28,
-   "name": "Голубика и розмарин",
+   "id": 21,
+   "name": "Груша в карамели",
    "base": "водка",
-   "taste": "водка на розмарине, голубика",
+   "group": "НА ВОДКЕ",
+   "taste": "груша, карамель",
+   "icon": null,
+   "tags": [
+    "fruit",
+    "dessert"
+   ],
+   "h": "cbc0e026b144782f"
+  },
+  {
+   "id": 22,
+   "name": "Ванильная",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "ваниль",
+   "icon": null,
+   "tags": [
+    "dessert",
+    "soft"
+   ],
+   "h": "0c5238ba167df337"
+  },
+  {
+   "id": 23,
+   "name": "Апельсиновка",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "апельсиновая цедра",
+   "icon": "lemon",
+   "tags": [
+    "citrus"
+   ],
+   "h": "c2b80e6a16c8f496"
+  },
+  {
+   "id": 24,
+   "name": "Черника Улун",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "черника, чай улун",
+   "icon": "bilberry",
+   "tags": [
+    "berry",
+    "soft"
+   ],
+   "h": "478536198a33fecf"
+  },
+  {
+   "id": 25,
+   "name": "Алыча Лимон Ваниль",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "алыча, лимон, ваниль",
+   "icon": "apricot",
+   "tags": [
+    "fruit",
+    "citrus",
+    "dessert"
+   ],
+   "h": "146ce8f5e7d73ffb"
+  },
+  {
+   "id": 26,
+   "name": "Клюква Чили",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "клюква, перец чили",
+   "icon": "lingonberry",
+   "tags": [
+    "berry",
+    "spicy"
+   ],
+   "h": "bb3149cf082a012b"
+  },
+  {
+   "id": 27,
+   "name": "Голубика Сельдерей",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "голубика, сельдерей",
    "icon": "blueberry",
    "tags": [
     "berry",
     "herb"
    ],
+   "h": "ef9dbbf1f8d9613a"
+  },
+  {
+   "id": 28,
+   "name": "Ежевика Кафир-лайм",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "ежевика, листья кафир-лайма",
+   "icon": "blackberry",
+   "tags": [
+    "berry",
+    "citrus"
+   ],
    "h": "94bcedba4771c386"
   },
   {
    "id": 29,
-   "name": "Виски на черешне",
-   "base": "виски",
-   "taste": "черешня",
-   "icon": "cherry",
+   "name": "Черника Лимон",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "черника, лимон",
+   "icon": "bilberry",
    "tags": [
-    "berry"
+    "berry",
+    "citrus"
    ],
    "h": "8372890eca2bfa4b"
   },
   {
    "id": 30,
-   "name": "Бренди с абрикосом",
-   "base": "бренди",
-   "taste": "абрикос",
-   "icon": "apricot",
+   "name": "Макадамия Чили Мёд",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "орех макадамия, чили, мёд",
+   "icon": "pepper",
    "tags": [
-    "fruit"
+    "dessert",
+    "spicy"
    ],
    "h": "0d327b9ba222eacf"
   },
   {
    "id": 31,
-   "name": "Черешня и кокос",
+   "name": "Яблоко Корица Мёд",
    "base": "водка",
-   "taste": "черешня, кокосовая стружка",
-   "icon": "coconut",
+   "group": "НА ВОДКЕ",
+   "taste": "яблоко, корица, мёд",
+   "icon": null,
    "tags": [
-    "berry",
+    "fruit",
+    "spicy",
     "dessert"
    ],
    "h": "1da65d0c71c75e72"
   },
   {
    "id": 32,
-   "name": "Лимончелло",
+   "name": "Мятная Лимончелло",
    "base": "водка",
-   "taste": "лимонная водка, свежий лимон",
-   "icon": "lemon",
+   "group": "НА ВОДКЕ",
+   "taste": "мята, лимонная цедра",
+   "icon": "mint",
    "tags": [
     "citrus",
-    "dessert"
+    "fresh"
    ],
    "h": "441acb337016c44d"
   },
   {
    "id": 33,
-   "name": "Шоколадная",
-   "base": "текила",
-   "taste": "шоколад",
-   "icon": "cocoa",
+   "name": "Клюква Брусника",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "клюква, брусника",
+   "icon": "lingonberry",
    "tags": [
-    "dessert"
+    "berry"
    ],
    "h": "30ac877fd6b64847"
   },
   {
    "id": 34,
-   "name": "Базилик и лайм",
-   "base": "джин",
-   "taste": "базиликовый джин, цедра лайма",
-   "icon": "basil",
+   "name": "Клюква Ментол",
+   "base": "водка",
+   "group": "НА ВОДКЕ",
+   "taste": "клюква, ментол",
+   "icon": "lingonberry",
    "tags": [
-    "herb",
-    "citrus"
+    "berry",
+    "fresh"
    ],
    "h": "38724785e5a93f57"
   },
   {
    "id": 35,
-   "name": "Черника и мята",
-   "base": "водка",
-   "taste": "мятная водка, черника",
-   "icon": "bilberry",
+   "name": "Малина Ментол",
+   "base": "водка Белуга",
+   "group": "НА ВОДКЕ БЕЛУГА",
+   "taste": "малина, ментол",
+   "icon": "raspberry",
    "tags": [
     "berry",
     "fresh"
@@ -504,62 +552,237 @@
   },
   {
    "id": 36,
-   "name": "Вишня и мята",
-   "base": "водка",
-   "taste": "мятная водка, вишня",
+   "name": "Вишня Дуб",
+   "base": "водка Белуга",
+   "group": "НА ВОДКЕ БЕЛУГА",
+   "taste": "вишня, дуб",
    "icon": "cherry",
    "tags": [
     "berry",
-    "fresh"
+    "strong"
    ],
    "h": "ace9e00bf0969c40"
   },
   {
    "id": 37,
-   "name": "Черника и роза",
-   "base": "водка",
-   "taste": "водка на розе, черника",
-   "icon": "bilberry",
+   "name": "Хреновуха",
+   "base": "водка Белуга",
+   "group": "НА ВОДКЕ БЕЛУГА",
+   "taste": "хрен",
+   "icon": null,
    "tags": [
-    "berry",
-    "flower"
+    "spicy",
+    "strong"
    ],
    "h": "67672566b0477c59"
   },
   {
    "id": 38,
-   "name": "Ананас и чили",
-   "base": "водка",
-   "taste": "ананас, чили",
-   "icon": "pineapple",
+   "name": "Смородина Мята",
+   "base": "водка Белуга",
+   "group": "НА ВОДКЕ БЕЛУГА",
+   "taste": "чёрная смородина, мята",
+   "icon": "currant",
    "tags": [
-    "fruit",
-    "spicy"
+    "berry",
+    "fresh"
    ],
    "h": "b5e3abc7d6b1f82f"
   },
   {
    "id": 39,
-   "name": "Ананас и имбирь",
-   "base": "водка",
-   "taste": "ананас, имбирь",
-   "icon": "pineapple",
+   "name": "Клубника Бобы тонка",
+   "base": "водка Белуга",
+   "group": "НА ВОДКЕ БЕЛУГА",
+   "taste": "клубника, бобы тонка",
+   "icon": "strawberry",
    "tags": [
-    "fruit",
-    "spicy"
+    "berry",
+    "dessert"
    ],
    "h": "ba674d1e5cd970c7"
   },
   {
    "id": 40,
-   "name": "Перцовка",
-   "base": "водка",
-   "taste": "перец горошком, чили, болгарский перец",
-   "icon": "pepper",
+   "name": "Вишня Халапеньо",
+   "base": "водка Белуга",
+   "group": "НА ВОДКЕ БЕЛУГА",
+   "taste": "вишня, перец халапеньо",
+   "icon": "cherry",
    "tags": [
+    "berry",
     "spicy"
    ],
    "h": "c568e114ff94c96c"
+  },
+  {
+   "id": 41,
+   "name": "Базилик Ежевика",
+   "base": "джин",
+   "group": "НА ДЖИНЕ",
+   "taste": "базилик, ежевика",
+   "icon": "basil",
+   "tags": [
+    "herb",
+    "berry"
+   ],
+   "h": "1385d9bb53f8348c"
+  },
+  {
+   "id": 42,
+   "name": "Малина Бобы тонка",
+   "base": "джин",
+   "group": "НА ДЖИНЕ",
+   "taste": "малина, бобы тонка",
+   "icon": "raspberry",
+   "tags": [
+    "berry",
+    "dessert"
+   ],
+   "h": "d3de2c77f8a24d8b"
+  },
+  {
+   "id": 43,
+   "name": "Малина Ежевика",
+   "base": "джин",
+   "group": "НА ДЖИНЕ",
+   "taste": "малина, ежевика",
+   "icon": "blackberry",
+   "tags": [
+    "berry"
+   ],
+   "h": "fdfa017bf82dadb2"
+  },
+  {
+   "id": 44,
+   "name": "Малина Эрл Грей",
+   "base": "джин",
+   "group": "НА ДЖИНЕ",
+   "taste": "малина, чай с бергамотом",
+   "icon": "earlgrey",
+   "tags": [
+    "berry",
+    "citrus"
+   ],
+   "h": "63eb364e401d3679"
+  },
+  {
+   "id": 45,
+   "name": "Мятный джин",
+   "base": "джин",
+   "group": "НА ДЖИНЕ",
+   "taste": "мята",
+   "icon": "mint",
+   "tags": [
+    "fresh",
+    "herb"
+   ],
+   "h": "4769960db7ebbc14"
+  },
+  {
+   "id": 46,
+   "name": "Сельдереевый джин",
+   "base": "джин",
+   "group": "НА ДЖИНЕ",
+   "taste": "сельдерей",
+   "icon": null,
+   "tags": [
+    "herb",
+    "fresh"
+   ],
+   "h": "625ce537deceed88"
+  },
+  {
+   "id": 47,
+   "name": "Банановый пряный",
+   "base": "ром",
+   "group": "НА РОМЕ",
+   "taste": "банан, пряности",
+   "icon": null,
+   "tags": [
+    "fruit",
+    "spicy",
+    "dessert"
+   ],
+   "h": "52971b08fe1da430"
+  },
+  {
+   "id": 48,
+   "name": "Груша Липа Мёд",
+   "base": "ром",
+   "group": "НА РОМЕ",
+   "taste": "груша, липовый цвет, мёд",
+   "icon": null,
+   "tags": [
+    "fruit",
+    "flower",
+    "dessert"
+   ],
+   "h": "1daece171cbbbd6c"
+  },
+  {
+   "id": 49,
+   "name": "Барбарисовый",
+   "base": "ром",
+   "group": "НА РОМЕ",
+   "taste": "барбарис",
+   "icon": "redcurrant",
+   "tags": [
+    "berry",
+    "dessert"
+   ],
+   "h": "c2b9be4db2f4bf44"
+  },
+  {
+   "id": 50,
+   "name": "Ананас Халапеньо",
+   "base": "текила",
+   "group": "НА ТЕКИЛЕ",
+   "taste": "ананас, перец халапеньо",
+   "icon": "pineapple",
+   "tags": [
+    "fruit",
+    "spicy"
+   ],
+   "h": "fe22d9c70c166222"
+  },
+  {
+   "id": 51,
+   "name": "Клубника Лемонграсс",
+   "base": "текила",
+   "group": "НА ТЕКИЛЕ",
+   "taste": "клубника, лемонграсс",
+   "icon": "strawberry",
+   "tags": [
+    "berry",
+    "citrus"
+   ],
+   "h": "151b8236c8d552c2"
+  },
+  {
+   "id": 52,
+   "name": "Шоколадная",
+   "base": "текила",
+   "group": "НА ТЕКИЛЕ",
+   "taste": "шоколад",
+   "icon": "cocoa",
+   "tags": [
+    "dessert"
+   ],
+   "h": "83bdd17f53ac3ffd"
+  },
+  {
+   "id": 53,
+   "name": "Виски на черешне",
+   "base": "виски",
+   "group": "НА ВИСКИ",
+   "taste": "черешня",
+   "icon": "cherry",
+   "tags": [
+    "berry",
+    "strong"
+   ],
+   "h": "dade25a445d6291e"
   }
  ]
 }

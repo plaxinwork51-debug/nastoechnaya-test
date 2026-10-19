@@ -30,6 +30,7 @@ body{min-height:100vh;min-height:100svh;font-family:var(--serif);font-size:17px;
 .band h1{position:absolute;left:0;right:0;bottom:46px;z-index:1;font-family:var(--display);font-weight:400;font-size:28px;line-height:1;
   letter-spacing:.06em;text-transform:uppercase;text-shadow:0 2px 14px rgba(20,10,2,.9)}
 .band p{position:absolute;left:0;right:0;bottom:22px;z-index:1;font-size:13px;font-style:italic;opacity:.85}
+@media (max-height:640px){.band{height:calc(138px + env(safe-area-inset-top))}.band .neon{width:min(220px,62%)}.band h1{bottom:38px;font-size:24px}.band p{bottom:16px}}
 
 /* страница */
 .page{position:relative;max-width:var(--maxw);margin:-14px auto 0;min-height:calc(100vh - 170px);min-height:calc(100svh - 170px);background:var(--paper);
@@ -52,9 +53,15 @@ h2{font-family:var(--display);font-weight:400;font-size:26px;line-height:1.1;let
   transition:background .2s,color .2s,transform .12s var(--ease)}
 .seg button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
 .seg button:active{transform:scale(.97)}
+@media (max-width:389px){.seg{gap:4px}.seg button{flex:1 1 auto;padding:0 8px;font-size:14px}}
+@media (max-width:340px){.seg button{padding:0 5px;font-size:13px;letter-spacing:-.01em}}
 
 /* строки книжки */
 .list{margin-top:8px}
+.grp{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:baseline;margin:14px -4px 0;padding:10px 4px 6px;background:var(--paper);border-bottom:1px solid var(--rule);
+  font-family:var(--serif);font-weight:400;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-ink)}
+.grp:first-child{margin-top:4px}
+.grp-n{font-size:12px;letter-spacing:0;color:var(--ink-3);font-variant-numeric:tabular-nums}
 .row{display:grid;grid-template-columns:54px 1fr auto;align-items:center;gap:12px;width:100%;min-height:76px;padding:10px 2px;text-align:left;
   border-bottom:1px solid var(--rule);transition:background .2s}
 .row:active{background:var(--paper-2)}

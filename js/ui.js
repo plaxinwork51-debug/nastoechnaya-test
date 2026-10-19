@@ -46,14 +46,18 @@ function renderBook() {
     if (filter === 'tasted' && !e) return false;
     if (filter === 'stamped' && !(e && e.s)) return false;
     if (filter === 'new' && e) return false;
-    return !q || (t.name + ' ' + t.base + ' ' + t.taste).toLowerCase().includes(q);
+    return !q || (t.name + ' ' + t.base + ' ' + t.taste).toLowerCase().replace(/ё/g, 'е').includes(q.replace(/ё/g, 'е'));
   });
+  const inGroup = {}; list.forEach(t => { inGroup[t.group] = (inGroup[t.group] || 0) + 1; });
+  let grp = null;
   $('#list').innerHTML = list.length ? list.map(t => {
     const e = NK.entry(t.id);
+    const head = t.group && t.group !== grp ? '<h3 class="grp"><span>' + esc(t.group) + '</span><span class="grp-n">' + inGroup[t.group] + '</span></h3>' : '';
+    grp = t.group;
     const rate = e && e.r ? '<span class="minirate" aria-label="оценка ' + e.r + ' из 5">' + [1, 2, 3, 4, 5].map(i => '<i class="' + (i <= e.r ? 'on' : '') + '"></i>').join('') + '</span>' : '';
-    return '<button class="row' + (e ? ' has' : '') + '" data-id="' + t.id + '">' +
+    return head + '<button class="row' + (e ? ' has' : '') + '" data-id="' + t.id + '">' +
       '<img class="ri" src="' + icon(t) + '" alt="" width="54" height="54" loading="lazy" decoding="async">' +
-      '<span><span class="rn">' + esc(t.name) + '</span><span class="rm">' + esc(t.base) + ' · ' + esc(t.taste) + '</span></span>' +
+      '<span><span class="rn">' + esc(t.name) + '</span><span class="rm">' + esc(t.group ? t.taste : t.base + ' · ' + t.taste) + '</span></span>' +
       '<span class="rs">' + (e && e.s ? SEAL_MINI : '<span class="no">№ ' + String(t.id).padStart(2, '0') + '</span>') +
       (rate || (e && e.f ? FAV_MINI : '')) + '</span></button>';
   }).join('') : '<p class="empty">' + (q ? 'Такой настойки не нашли. Спроси у бармена, может, она под другим именем' :
