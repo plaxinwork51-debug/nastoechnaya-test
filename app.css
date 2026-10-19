@@ -290,3 +290,38 @@ h2{font-family:var(--display);font-weight:400;font-size:26px;line-height:1.1;let
 .stamp-list li span:last-child{color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
 #showBar{margin-top:10px}
 .empty .btn{max-width:240px;margin-inline:auto}
+
+/* вечер: баннер-афиша и угадай вкус */
+.evb{display:grid;grid-template-columns:64px 1fr 20px;align-items:center;gap:12px;width:100%;margin:0 0 14px;padding:10px 12px 10px 10px;text-align:left;
+  border-radius:14px;background:var(--bar);color:var(--cream);box-shadow:0 6px 18px -10px rgba(20,14,8,.7);transition:transform .12s var(--ease)}
+.evb:active{transform:scale(.985)}
+.evb img{width:64px;height:64px;border-radius:10px;object-fit:cover}
+.evb-k{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.evb-t{display:block;font-family:var(--display);font-size:19px;line-height:1.15;margin-top:2px}
+.evb-s{display:block;font-size:13.5px;font-style:italic;opacity:.8;margin-top:3px}
+.evb svg{width:20px;height:20px;color:var(--gold)}
+.ev-poster{display:block;width:100%;max-width:420px;height:auto;margin:6px auto 0;border-radius:14px;box-shadow:0 10px 30px -14px rgba(20,14,8,.6)}
+.ev-title{text-align:center;margin-top:16px}
+.ev-lines{list-style:none;margin:14px 0 14px;padding:0}
+.ev-lines li{position:relative;padding:7px 0 7px 22px;border-bottom:1px solid var(--rule);font-size:16px;color:var(--ink-2)}
+.ev-lines li::before{content:"";position:absolute;left:4px;top:16px;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.ev-guess{margin-top:10px}
+.ev-row{display:grid;grid-template-columns:76px 1fr;align-items:center;gap:10px;padding:6px 0}
+.ev-p{font-size:14px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.ev-row select{width:100%;min-width:0;min-height:48px;padding:0 10px;font:inherit;font-size:16px;color:var(--ink-3);border-radius:12px;border:1px solid var(--rule);background:var(--paper-2)}
+.ev-row select.set{color:var(--ink);border-color:var(--gold-ink);background:#FFF7E6}
+.ev-score{text-align:center;font-family:var(--display);font-size:22px;color:var(--ink-2);margin-top:8px}
+.ev-score span{font-size:64px;line-height:1;color:var(--gold-ink)}
+.ev-cap{text-align:center;font-style:italic;color:var(--ink-3)}
+.ev-list{list-style:none;margin:12px 0 0;padding:0}
+.ev-list li{display:grid;grid-template-columns:76px 1fr 28px;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--rule)}
+.ev-list b{font-weight:400;display:block}
+.ev-list small{display:block;font-size:13px;color:var(--ink-3)}
+.ev-list i{font-style:normal;font-size:20px;text-align:center}
+.ev-list li.ok i{color:#2E7D32}.ev-list li.no i{color:#B3261E}
+.ev-prize{margin-top:16px;padding:16px;border-radius:14px;background:var(--bar);color:var(--cream);text-align:center}
+.ev-prize b{display:block;font-family:var(--display);font-weight:400;font-size:26px;color:var(--gold)}
+.ev-prize p{margin:4px 0 0;font-size:15px;opacity:.9}
+.ev-prize .btn{margin-top:12px;color:var(--cream);border-color:rgba(255,244,226,.4)}
+.ev-prize.done{background:var(--paper-2);color:var(--ink-2)}.ev-prize.done b{color:var(--ink-3)}
+@media (max-width:359px){.ev-row,.ev-list li{grid-template-columns:58px 1fr}.ev-list li{grid-template-columns:58px 1fr 24px}.ev-row select{font-size:15px;padding:0 6px}}

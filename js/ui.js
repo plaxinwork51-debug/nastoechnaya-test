@@ -33,10 +33,18 @@ function seal(ts, rot) {
 }
 
 let view = 'book', filter = 'all', query = '', openId = null, flushNote = () => {};
+const now = () => window.__nkNow || Date.now();
+const EV_OPEN_EARLY = 3 * 3600000;  // угадайка открывается за 3 часа до старта
+const evOn = () => { const ev = NK.cfg.event; return !!ev && now() < Date.parse(ev.until); };
+const evPlay = () => { const ev = NK.cfg.event; return !!ev && (now() >= Date.parse(ev.start) - EV_OPEN_EARLY || /[?&]vecher=open\b/.test(location.search)); };
 
 // ---------- книжка ----------
 function renderBook() {
-  const n = NK.tasted(), s = NK.stamped(), rk = NK.rank();
+  const n = NK.tasted(), s = NK.stamped(), rk = NK.rank(), ev = NK.cfg.event, vs = NK.evState();
+  $('#evBanner').innerHTML = evOn() ? '<button class="evb" id="evOpen"><img src="' + ev.thumb + '" alt="" width="64" height="64">' +
+    '<span><span class="evb-k">' + esc(ev.short) + '</span><span class="evb-t">' + esc(ev.title) + '</span>' +
+    '<span class="evb-s">' + (vs.rev ? 'угадано ' + NK.evScore().score + ' из ' + ev.n : evPlay() ? 'Угадай вкус: игра уже идёт' : 'Угадай вкус прямо в книжке') + '</span></span>' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>' : '';
   $('#bookStatus').innerHTML = (NK.persistent ? '' : '<span class="warn">Этот браузер не сохраняет книжку. Записывай и сразу отправляй себе ссылкой во вкладке «Звания»</span>') +
     (n ? 'В книжке ' + plural(n, 'запись', 'записи', 'записей') + ', печатей <b>' + s + ' из ' + NK.total() + '</b> · ' + esc(rk.r.name)
       : 'Попробовал настойку? Найди её тут и запиши, как зашла');
@@ -164,6 +172,96 @@ function wireLeaf(t) {
     else if (r.error === 'format') msg.textContent = 'Код из четырёх цифр';
     else if (r.error === 'insecure' || r.error === 'crypto') msg.textContent = 'Печать не ставится в этом браузере. Открой книжку по ссылке https://';
     else msg.textContent = 'Не тот код. Уточни у бармена';
+    input.classList.remove('bad'); void input.offsetWidth; input.classList.add('bad'); input.select();
+  });
+}
+
+// ---------- вечер: афиша и угадай вкус ----------
+function openEvent(push = true) {
+  if (!NK.cfg.event || (push && openId)) return;
+  flushNote = () => {}; openId = 'ev';
+  if (push) history.pushState({leaf: 'ev'}, '');
+  renderEvent();
+  $('#leaf').classList.add('on'); $('#leaf').scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => { const b = $('#leaf .back'); if (b) b.focus({preventScroll: true}); }, 340);
+}
+function tinctureOptions(sel) {
+  let html = '<option value="">какая это настойка?</option>', grp = null;
+  NK.cfg.tinctures.forEach(t => {
+    if (t.group !== grp) { html += (grp ? '</optgroup>' : '') + '<optgroup label="' + esc(t.group) + '">'; grp = t.group; }
+    html += '<option value="' + t.id + '"' + (t.id === sel ? ' selected' : '') + '>' + esc(t.name) + '</option>';
+  });
+  return html + '</optgroup>';
+}
+function renderEvent() {
+  const ev = NK.cfg.event, v = NK.evState(), g = v.g || {}, sc = NK.evScore();
+  let game;
+  if (v.rev) {
+    game = '<div class="ev-score"><span>' + sc.score + '</span> из ' + ev.n + '</div><p class="ev-cap">' +
+      (sc.all ? 'Все пробы угаданы. Ты чувствуешь настойки лучше бармена' : sc.score ? 'Неплохо для одного вечера. Остальное догонишь в книжке' : 'Мимо, зато теперь знаешь эти вкусы в лицо') + '</p>' +
+      '<ol class="ev-list">' + v.a.map((id, i) => {
+        const t = NK.byId(id), mine = g[i + 1], ok = mine === id;
+        return '<li class="' + (ok ? 'ok' : 'no') + '"><span class="ev-p">Проба ' + (i + 1) + '</span><span><b>' + esc(t ? t.name : '?') + '</b>' +
+          (ok ? '' : '<small>' + (mine ? 'ты написал: ' + esc((NK.byId(mine) || {}).name || '?') : 'без ответа') + '</small>') + '</span><i aria-label="' + (ok ? 'угадал' : 'мимо') + '">' + (ok ? '✓' : '×') + '</i></li>';
+      }).join('') + '</ol>' +
+      (sc.all ? '<div class="ev-prize' + (v.pz ? ' done' : '') + '"><b>' + (v.pz ? 'Приз выдан' : 'Рюмка от бара') + '</b><p>' +
+        (v.pz ? fmtFull(v.pz) : 'Покажи этот экран бармену, он нальёт рюмку на выбор') + '</p>' +
+        (v.pz ? '' : '<button class="btn btn-line" id="evPz">Бармен: приз выдан</button>') + '</div>' : '') +
+      '<p class="tip">Все пробы вечера встали в книжку печатями</p>';
+  } else if (!evPlay()) {
+    game = '<p>В этот вечер Сергей выносит пробы с номерами. Ты отмечаешь тут, какая это, по-твоему, настойка, а в конце он называет код и открывает ответы. Угадал все, рюмка от бара</p>' +
+      '<p class="tip">Игра откроется ' + esc(ev.when.replace(/^[^,]+, /, '')) + '</p>';
+  } else {
+    game = '<p>Пробуй пробу и выбирай, что это за настойка. Ответы откроются кодом, который Сергей назовёт в конце вечера</p>' +
+      '<div class="ev-guess">' + Array.from({length: ev.n}, (_, i) => '<label class="ev-row"><span class="ev-p">Проба ' + (i + 1) + '</span>' +
+        '<select data-probe="' + (i + 1) + '" class="' + (g[i + 1] ? 'set' : '') + '">' + tinctureOptions(g[i + 1]) + '</select></label>').join('') + '</div>' +
+      '<div class="stamp-box"><p><b style="font-weight:400;color:var(--ink)">Открыть ответы.</b> Введи код от Сергея</p>' +
+      '<form id="evForm" autocomplete="off"><label class="sr" for="evCode">Код ответов</label>' +
+      '<input class="code" id="evCode" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="····" autocomplete="off" enterkeyhint="done">' +
+      '<div class="msg" id="evMsg" role="alert"></div><button class="btn btn-ink" type="submit">Открыть ответы</button></form></div>';
+  }
+  $('#leafIn').innerHTML =
+    '<div class="leaf-top"><button class="back" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Книжка</button>' +
+    '<span class="leaf-no">' + esc(ev.short) + '</span></div>' +
+    '<img class="ev-poster" src="' + ev.poster + '" alt="Афиша: ' + esc(ev.title) + '" width="720" height="964">' +
+    '<h2 id="leafName" class="ev-title">' + esc(ev.title) + '</h2><p class="leaf-taste">' + esc(ev.when) + ' · ' + esc(NK.cfg.address) + '</p>' +
+    '<ul class="ev-lines">' + ev.lines.map(l => '<li>' + esc(l) + '</li>').join('') + '</ul>' +
+    (now() < Date.parse(ev.start) ? '<a class="btn btn-gold" href="tel:' + esc(ev.phone) + '">Забронировать стол · ' + esc(ev.phoneShow) + '</a>' : '') +
+    '<div class="blk" id="evGame"><div class="blk-h">Угадай вкус</div>' + game + '</div>';
+  wireEvent();
+}
+function wireEvent() {
+  const L = $('#leafIn');
+  L.querySelector('[data-back]').addEventListener('click', () => history.back());
+  L.querySelectorAll('select[data-probe]').forEach(el => el.addEventListener('change', () => {
+    NK.evGuess(el.dataset.probe, +el.value || 0); el.classList.toggle('set', !!el.value);
+  }));
+  const pz = $('#evPz');
+  if (pz) pz.addEventListener('click', () => dialog('<h3>Приз выдан?</h3><p>Нажимает бармен, когда налил рюмку. Второй раз приз не выдаётся</p>' +
+    '<button class="btn btn-ink" id="pzYes">Да, выдан</button><button class="btn btn-line" data-close>Отмена</button>', card => {
+    card.querySelector('#pzYes').addEventListener('click', () => { NK.evPrize(); closeDialog(); renderEvent(); });
+  }));
+  const form = $('#evForm'); if (!form) return;
+  const input = $('#evCode'), msg = $('#evMsg');
+  input.addEventListener('focus', () => intoView(form));
+  input.addEventListener('input', () => { input.value = input.value.replace(/\D/g, '').slice(0, 4); msg.textContent = ''; input.classList.remove('bad'); });
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const filled = Object.keys(NK.evState().g || {}).length;
+    if (filled < NK.cfg.event.n && !form.dataset.sure) { form.dataset.sure = 1; msg.textContent = 'Отмечено ' + filled + ' из ' + NK.cfg.event.n + '. После кода ответы не поменять. Нажми ещё раз, если готов'; return; }
+    const r = await NK.evReveal(input.value);
+    if (r.error === 'busy') return;
+    if (r.ok) {
+      if (navigator.vibrate) navigator.vibrate([18, 40, 28]);
+      renderEvent(); markBackupTab();
+      $('#evGame').scrollIntoView({block: 'start', behavior: 'smooth'});
+      if (r.rankUp) setTimeout(() => rankUp(r.rank), 900);
+      else if (r.added) toast('В книжку встало ' + plural(r.added, 'печать', 'печати', 'печатей'));
+      return;
+    }
+    msg.textContent = r.locked ? 'Много промахов подряд, подожди ' + r.left + ' сек' : r.error === 'format' ? 'Код из четырёх цифр' :
+      r.error === 'insecure' || r.error === 'crypto' ? 'Не открывается в этом браузере. Открой книжку по ссылке https://' : 'Не тот код. Уточни у Сергея';
     input.classList.remove('bad'); void input.offsetWidth; input.classList.add('bad'); input.select();
   });
 }
@@ -372,6 +470,7 @@ function render() { if (view === 'book') renderBook(); else if (view === 'top') 
 document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => show(b.dataset.v)));
 document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => { filter = b.dataset.f; renderBook(); }));
 $('#q').addEventListener('input', e => { query = e.target.value; renderBook(); });
+document.addEventListener('click', e => { if (e.target.closest('#evOpen') && !$('#dlg').classList.contains('on')) openEvent(); });
 document.addEventListener('click', e => { const r = e.target.closest('.row, .toprow'); if (r && r.dataset.id) { if ($('#dlg').classList.contains('on')) return; openLeaf(+r.dataset.id); } });
 $('#dlg').addEventListener('click', e => { if (e.target.id === 'dlg' && !dlgSticky) closeDialog(); });
 $('#backupBtn').addEventListener('click', openBackup);
@@ -380,7 +479,7 @@ $('#showBar').addEventListener('click', showToBarman);
 window.addEventListener('hashchange', () => { if (NK.cfg) checkIncoming(); });
 window.addEventListener('popstate', e => {
   if ($('#dlg').classList.contains('on')) { dlgPushed = false; hideDialog(); return; }
-  if (e.state && e.state.leaf) { if (openId !== e.state.leaf) openLeaf(e.state.leaf, false); } else closeLeaf();
+  if (e.state && e.state.leaf) { if (openId !== e.state.leaf) e.state.leaf === 'ev' ? openEvent(false) : openLeaf(e.state.leaf, false); } else closeLeaf();
 });
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;

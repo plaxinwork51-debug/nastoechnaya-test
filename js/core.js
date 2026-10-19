@@ -1,5 +1,6 @@
 // Ядро «Настоечной книжки»: данные гостя, печати бармена, звания, топ, бэкап-ссылка. Без DOM.
-// Запись о настойке: {r: оценка 0-5, t: [теги гостя], n: заметка, f: 1 = возьму ещё, d: когда записал, s: когда поставлена печать, k: код печати}
+// Запись о настойке: {r: оценка 0-5, t: [теги гостя], n: заметка, f: 1 = возьму ещё, d: когда записал, s: когда поставлена печать, k: код печати (v1234 = печать с вечера)}
+// Вечер (cfg.event): st.v = {g: {проба: id догадки}, a: [ответы], rev: когда открыли, pz: когда выдан приз}
 const NK = (() => {
   const NOTE_MAX = 280, LINK_MAX = 3500, HASH_MAX = 20000;
   let cfg = null, st = null, key = '', mem = null, persistent = true, busy = false;
@@ -21,7 +22,7 @@ const NK = (() => {
     if (typeof e.n === 'string' && e.n.trim()) o.n = e.n.trim().slice(0, NOTE_MAX);
     if (e.f) o.f = 1;
     if (+e.d > 0 && +e.d < maxTime()) o.d = +e.d;
-    if (+e.s > 0 && +e.s < maxTime()) { o.s = +e.s; if (/^\d{4}$/.test(e.k || '')) o.k = e.k; }
+    if (+e.s > 0 && +e.s < maxTime()) { o.s = +e.s; if (/^v?\d{4}$/.test(e.k || '')) o.k = e.k; }
     return o;
   };
   const empty = e => !e || !(e.r || e.t || e.n || e.f || e.s);
@@ -31,7 +32,17 @@ const NK = (() => {
     const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
     return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('').slice(0, 16);
   }
-  const codeOk = async (t, code) => !!code && (await sha(cfg.salt + ':' + t.id + ':' + code)) === t.h;
+  async function shaBytes(s) { return new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s))); }
+  async function evAnswers(code) {  // ответы вечера по коду ведущего, без кода их нет
+    const ev = cfg.event; if (!ev || !code || (await sha(cfg.salt + ':vecher:' + code)) !== ev.h) return null;
+    const ks = await shaBytes(cfg.salt + ':vbox:' + code);
+    return ev.box.match(/../g).map((x, i) => parseInt(x, 16) ^ ks[i % 32]);
+  }
+  const codeOk = async (t, code) => {
+    if (!code) return false;
+    if (code[0] === 'v') { const a = await evAnswers(code.slice(1)); return !!a && a.includes(t.id); }  // печать с вечера
+    return (await sha(cfg.salt + ':' + t.id + ':' + code)) === t.h;
+  };
 
   // ---------- старт ----------
   function load() {
@@ -88,6 +99,51 @@ const NK = (() => {
     } catch (e) { return {ok: false, error: 'crypto'}; }
     finally { busy = false; }
   }
+
+  // ---------- вечер: угадай вкус ----------
+  const evState = () => st.v || {};
+  function evGuess(p, id) {  // p: номер пробы с 1, id: настойка или 0
+    const ev = cfg.event; p = +p;
+    if (!ev || st.v && st.v.rev || !(p >= 1 && p <= ev.n)) return evState();
+    st.v = st.v || {}; st.v.g = st.v.g || {};
+    if (byId(id)) st.v.g[p] = +id; else delete st.v.g[p];
+    store.write(); return st.v;
+  }
+  async function evReveal(code) {  // -> {ok, score, n, all, added, rankUp, rank} | {error, locked, left}
+    const ev = cfg.event; if (!ev) return {ok: false, error: 'none'};
+    if (st.v && st.v.rev) return Object.assign({ok: true, already: true}, evScore());
+    if (busy) return {ok: false, error: 'busy'};
+    const left = lockLeft(); if (left) return {ok: false, locked: true, left};
+    code = String(code || '').replace(/\D/g, '');
+    if (code.length !== 4) return {ok: false, error: 'format'};
+    if (!(window.crypto && crypto.subtle)) return {ok: false, error: 'insecure'};
+    busy = true;
+    try {
+      const a = await evAnswers(code);
+      if (!a) {
+        st.fails = (st.fails || 0) + 1;
+        let res = {ok: false, error: 'wrong'};
+        if (st.fails >= 5) { st.lockUntil = Date.now() + 30000; st.fails = 0; res = {ok: false, locked: true, left: 30}; }
+        store.write(); return res;
+      }
+      const before = rank().r, now = Date.now(); let added = 0;
+      st.v = Object.assign(st.v || {}, {a, rev: now});
+      for (const id of new Set(a)) {  // все пробы вечера встают печатями
+        const k = String(id), cur = st.e[k] || {};
+        if (cur.s) continue;
+        st.e[k] = clean({...cur, s: now, k: 'v' + code, d: cur.d || now}); added++;
+      }
+      st.fails = 0; touch(); store.write();
+      return Object.assign({ok: true, added, rankUp: rank().r !== before, rank: rank().r}, evScore());
+    } catch (e) { return {ok: false, error: 'crypto'}; }
+    finally { busy = false; }
+  }
+  function evScore() {
+    const v = evState(), n = cfg.event ? cfg.event.n : 0, g = v.g || {};
+    const score = v.a ? v.a.filter((id, i) => g[i + 1] === id).length : 0;
+    return {score, n, all: !!v.a && score === n};
+  }
+  function evPrize() { if (!evScore().all || st.v.pz) return evState(); st.v.pz = Date.now(); store.write(); return st.v; }
 
   // ---------- звания ----------
   const total = () => cfg.tinctures.length;
@@ -210,7 +266,7 @@ const NK = (() => {
   }
 
   const api = {init, reload: load, flags, setFlag, entry, save, toggleTag, stamp, lockLeft, rank, total, stamped, tasted, stampList, top, profile, suggest,
-    backupLink, needBackup, readBackup, merge, byId, get cfg() { return cfg; }, get persistent() { return persistent; }, get key() { return key; }, NOTE_MAX};
+    backupLink, needBackup, readBackup, merge, byId, evState, evGuess, evReveal, evScore, evPrize, get cfg() { return cfg; }, get persistent() { return persistent; }, get key() { return key; }, NOTE_MAX};
   return api;
 })();
 if (typeof window !== 'undefined') window.NK = NK;

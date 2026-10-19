@@ -95,6 +95,26 @@
    "medal": 5
   }
  ],
+ "event": {
+  "title": "Вечер настоек с Сергеем Гришко",
+  "start": "2026-10-22T20:00:00+03:00",
+  "until": "2026-10-23T04:00:00+03:00",
+  "when": "Четверг, 22 октября, 20:00",
+  "short": "ЧТ 22.10 · 20:00",
+  "lines": [
+   "Сергей рассказывает, из чего и как делаются наши настойки",
+   "Секретный гость из барного мира",
+   "Угадай вкус прямо в книжке: угадал все пробы, рюмка от бара",
+   "Закуска от шефа и плейлист под тему"
+  ],
+  "phone": "+78152754466",
+  "phoneShow": "75-44-66",
+  "poster": "assets/vecher.webp",
+  "thumb": "assets/vecher_th.webp",
+  "n": 6,
+  "h": "f8509f08812e0509",
+  "box": "facc93ec635f"
+ },
  "tinctures": [
   {
    "id": 1,
@@ -232,7 +252,7 @@
    "base": "водка",
    "group": "НА ВОДКЕ",
    "taste": "томат, острый перец",
-   "icon": "pepper",
+   "icon": "tomato",
    "tags": [
     "spicy",
     "strong"
@@ -361,7 +381,7 @@
    "base": "водка",
    "group": "НА ВОДКЕ",
    "taste": "груша, карамель",
-   "icon": null,
+   "icon": "pear",
    "tags": [
     "fruit",
     "dessert"
@@ -374,7 +394,7 @@
    "base": "водка",
    "group": "НА ВОДКЕ",
    "taste": "ваниль",
-   "icon": null,
+   "icon": "vanilla",
    "tags": [
     "dessert",
     "soft"
@@ -387,7 +407,7 @@
    "base": "водка",
    "group": "НА ВОДКЕ",
    "taste": "апельсиновая цедра",
-   "icon": "lemon",
+   "icon": "orange",
    "tags": [
     "citrus"
    ],
@@ -491,7 +511,7 @@
    "base": "водка",
    "group": "НА ВОДКЕ",
    "taste": "яблоко, корица, мёд",
-   "icon": null,
+   "icon": "apple",
    "tags": [
     "fruit",
     "spicy",
@@ -569,7 +589,7 @@
    "base": "водка Белуга",
    "group": "НА ВОДКЕ БЕЛУГА",
    "taste": "хрен",
-   "icon": null,
+   "icon": "horseradish",
    "tags": [
     "spicy",
     "strong"
@@ -685,7 +705,7 @@
    "base": "джин",
    "group": "НА ДЖИНЕ",
    "taste": "сельдерей",
-   "icon": null,
+   "icon": "celery",
    "tags": [
     "herb",
     "fresh"
@@ -698,7 +718,7 @@
    "base": "ром",
    "group": "НА РОМЕ",
    "taste": "банан, пряности",
-   "icon": null,
+   "icon": "banana",
    "tags": [
     "fruit",
     "spicy",
@@ -712,7 +732,7 @@
    "base": "ром",
    "group": "НА РОМЕ",
    "taste": "груша, липовый цвет, мёд",
-   "icon": null,
+   "icon": "linden",
    "tags": [
     "fruit",
     "flower",
