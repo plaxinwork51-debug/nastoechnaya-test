@@ -1,6 +1,7 @@
 // Ядро «Настоечной книжки»: данные гостя, печати бармена, звания, топ, бэкап-ссылка. Без DOM.
 // Запись о настойке: {r: оценка 0-5, t: [теги гостя], n: заметка, f: 1 = возьму ещё, d: когда записал, s: когда поставлена печать, k: код печати (v1234 = печать с вечера)}
-// Вечер (cfg.event): st.v = {g: {проба: id догадки}, a: [ответы], rev: когда открыли, pz: когда выдан приз}
+// Вечер (cfg.event): st.v = {id: вечер, g: {проба: id догадки}, a: [ответы], rev: когда открыли, pz: когда выдан приз}
+// Прошлые вечера уходят в st.vh[id], их печати (k = v+код) проверяются по cfg.pastEvents
 const NK = (() => {
   const NOTE_MAX = 280, LINK_MAX = 3500, HASH_MAX = 20000;
   let cfg = null, st = null, key = '', mem = null, persistent = true, busy = false;
@@ -33,14 +34,17 @@ const NK = (() => {
     return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('').slice(0, 16);
   }
   async function shaBytes(s) { return new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s))); }
-  async function evAnswers(code) {  // ответы вечера по коду ведущего, без кода их нет
-    const ev = cfg.event; if (!ev || !code || (await sha(cfg.salt + ':vecher:' + code)) !== ev.h) return null;
+  async function evAnswers(code, ev = cfg.event) {  // ответы вечера по коду ведущего, без кода их нет
+    if (!ev || !code || (await sha(cfg.salt + ':vecher:' + code)) !== ev.h) return null;
     const ks = await shaBytes(cfg.salt + ':vbox:' + code);
     return ev.box.match(/../g).map((x, i) => parseInt(x, 16) ^ ks[i % 32]);
   }
   const codeOk = async (t, code) => {
     if (!code) return false;
-    if (code[0] === 'v') { const a = await evAnswers(code.slice(1)); return !!a && a.includes(t.id); }  // печать с вечера
+    if (code[0] === 'v') {  // печать с вечера, этого или прошлого
+      for (const ev of [cfg.event, ...(cfg.pastEvents || [])]) { const a = await evAnswers(code.slice(1), ev); if (a) return a.includes(t.id); }
+      return false;
+    }
     return (await sha(cfg.salt + ':' + t.id + ':' + code)) === t.h;
   };
 
@@ -51,6 +55,8 @@ const NK = (() => {
     const e = {};
     for (const [id, v] of Object.entries(st.e)) { if (!byId(id)) continue; const c = clean(v); if (!empty(c)) e[String(+id)] = c; }
     st.e = e;
+    const ev = cfg.event;  // угадайка прошлого вечера уезжает в архив, на новом вечере гость играет с нуля
+    if (ev && st.v && (st.v.id || 'old') !== ev.id) { st.vh = Object.assign(st.vh || {}, {[st.v.id || 'old']: st.v}); st.v = null; }
   }
   function init(config) { cfg = config; key = cfg.storageKey; load(); return api; }
   const flags = () => ({adult: !!st.adult, onboarded: !!st.onboarded});
@@ -105,7 +111,7 @@ const NK = (() => {
   function evGuess(p, id) {  // p: номер пробы с 1, id: настойка или 0
     const ev = cfg.event; p = +p;
     if (!ev || st.v && st.v.rev || !(p >= 1 && p <= ev.n)) return evState();
-    st.v = st.v || {}; st.v.g = st.v.g || {};
+    st.v = st.v || {id: ev.id}; st.v.g = st.v.g || {};
     if (byId(id)) st.v.g[p] = +id; else delete st.v.g[p];
     store.write(); return st.v;
   }
@@ -127,7 +133,7 @@ const NK = (() => {
         store.write(); return res;
       }
       const before = rank().r, now = Date.now(); let added = 0;
-      st.v = Object.assign(st.v || {}, {a, rev: now});
+      st.v = Object.assign(st.v || {id: ev.id}, {a, rev: now});
       for (const id of new Set(a)) {  // все пробы вечера встают печатями
         const k = String(id), cur = st.e[k] || {};
         if (cur.s) continue;
